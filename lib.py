@@ -1,15 +1,19 @@
-class GlobalPosVector:
-    def __init__(self, x, y, z, a):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.a = a
+from dataclasses import dataclass
 
+@dataclass
+class GlobalPosVector:
+    x: float
+    y: float
+    z: float
+    a: float
+       
+
+@dataclass
 class JointPosVector:
-    def __init__(self, a, b, c, d):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
+    a: float
+    b: float
+    c: float
+    d: float
+
 
 
