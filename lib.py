@@ -1,19 +1,15 @@
 from dataclasses import dataclass
 
 @dataclass
-class GlobalPosVector:
+class Point:
     x: float
     y: float
     z: float
-    a: float
-       
 
 @dataclass
-class JointPosVector:
+class Direction:
     a: float
     b: float
     c: float
-    d: float
-
 
 
