@@ -17,8 +17,10 @@ class Robot:
     l:float
     fR:float
     tH:float
-    baseVec:Vec
-    toolVec:Vec
+
+    def __post_init__(self):
+        self.toolVec = Vec(0,0,0)
+        self.baseVec = Vec(0,0,0)
 
     def attach_tool(self, tool:Vec):
         self.toolVec = tool
@@ -42,8 +44,21 @@ class RobotFactory:
     def deserialise(self, format:str, file_name:str):
         deserialiser = self._get_deserialiser(format)
         #TODO: Data validation
-        return deserialiser(file_name, id)
+        return deserialiser(file_name)
 
-    def create_from_file(self, format:str, file_name:str):
-        data = deserialise(format, file_name)
-    
+    def create_from_file(self, format:str = 'JSON', file_name:str = 'dimentions.json'):
+        data = self.deserialise(format, file_name)
+        robot = Robot(float(data['baseZOffset']),
+                      float(data['baseRadious']),
+                      float(data['arm']),
+                      float(data['link']),
+                      float(data['flangeRadious']),
+                      float(data['toolHeight']))
+        if 'baseVec' in data.keys():
+            robot.attach_base(data['baseVec'])
+        if 'toolVec' in data.keys():
+            robot.attach_tool(data['toolVec'])
+        return robot
+
+factory = RobotFactory()
+
