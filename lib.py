@@ -4,9 +4,9 @@ import json
 
 @dataclass
 class Vec:
-    x: float
-    y: float
-    z: float
+    x:float
+    y:float
+    z:float
 
 
 @dataclass
@@ -29,6 +29,8 @@ class Robot:
         self.baseVec = base
 
 
+
+
 class RobotFactory:
     def _deserialise_from_json(self, file_name:str):
         with open(file_name, "r") as file:
@@ -43,20 +45,26 @@ class RobotFactory:
 
     def deserialise(self, format:str, file_name:str):
         deserialiser = self._get_deserialiser(format)
-        #TODO: Data validation
         return deserialiser(file_name)
 
     def create_from_file(self, format:str = 'JSON', file_name:str = 'dimentions.json'):
         data = self.deserialise(format, file_name)
-        robot = Robot(float(data['baseZOffset']),
+        #TODO: Data validation
+        try:
+            robot = Robot(float(data['baseZOffset']),
                       float(data['baseRadious']),
                       float(data['arm']),
                       float(data['link']),
                       float(data['flangeRadious']),
                       float(data['toolHeight']))
+        except KeyError as e:
+            raise KeyError(f"Missing data in file! {e}")
+
         if 'baseVec' in data.keys():
+            #TODO: convert string to Vec
             robot.attach_base(data['baseVec'])
         if 'toolVec' in data.keys():
+            #TODO: as above
             robot.attach_tool(data['toolVec'])
         return robot
 
