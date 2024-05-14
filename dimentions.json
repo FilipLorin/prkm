@@ -1,10 +1,8 @@
 {
-  "robot": {
-    "_baseZOffset": "65",
-    "_baseRadious": "210",
-    "_arm": "330",
-    "_link": "850",
-    "_flangeRadious": "50",
-    "_toolHeight": "195"
-  }
+  "_baseZOffset": "65",
+  "_baseRadious": "210",
+  "_arm": "330",
+  "_link": "850",
+  "_flangeRadious": "50",
+  "_toolHeight": "195"
 }
