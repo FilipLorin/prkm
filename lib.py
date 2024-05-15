@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import json
+import numpy as np
 
 
 @dataclass
@@ -7,6 +8,7 @@ class Vec:
     x:float
     y:float
     z:float
+    #TODO: Change this to numpy arrays
 
 
 @dataclass
@@ -29,12 +31,11 @@ class Robot:
         self.baseVec = base
 
 
-
-
 class RobotFactory:
     def _deserialise_from_json(self, file_name:str):
         with open(file_name, "r") as file:
             data = json.loads(file.read())
+        #TODO: move type conversions here
         return data
 
     def _get_deserialiser(self, format:str):
