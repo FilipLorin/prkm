@@ -3,6 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser(prog="python prkm.py")
 parser.add_argument('-f', '--file', help='name of JSON file with robot dimentions', required=True)
+parser.add_argument('-p', '--precision', help='Number of digits of solution to display', type=int, default=4)
 subparsers = parser.add_subparsers(required=True, help='type kinematic solution to find') 
 
 inverse_parser = subparsers.add_parser('inverse', aliases = ['inv'], help='find inverse kinematics solution for a given tooltip position',
@@ -28,6 +29,6 @@ factory = lib.RobotFactory()
 robot = factory.create_from_file('JSON', args.file)
 
 if(args.task=='inverse'):
-    print(robot.inverse_kinematics(args.x, args.y, args.z, args.a))
+    print(robot.inverse_kinematics(args.x, args.y, args.z, args.a, args.precision))
 elif(args.task=='forward'):
-    print(robot.forward_kinematics(args.th1, args.th2, args.th3, args.phi))
+    print(robot.forward_kinematics(args.th1, args.th2, args.th3, args.phi, args.precision))

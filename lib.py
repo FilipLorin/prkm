@@ -61,12 +61,12 @@ class Robot:
 
         return [th1, th2, th3]
 
-    def inverse_kinematics(self, x, y, z, w):
+    def inverse_kinematics(self, x, y, z, w, precision=6):
         ExtP = np.array([x, y, z])
         BOVec = np.array([0, 0, -self.bZO])
         ToolZRot = np.array([[math.cos(w), -math.sin(w), 0], [math.sin(w), math.cos(w), 0], [0, 0, 1]])
         I = self.baseVec + BOVec - ExtP + ToolZRot.dot(self.toolVec)
-        return list(map(lambda x: round(x,6), [*self._internal_inverse_kinematics(I[0], I[1], I[2]), w]))
+        return list(map(lambda x: round(x,precision), [*self._internal_inverse_kinematics(I[0], I[1], I[2]), w]))
 
     def _internal_forward_kinematics(self, th1, th2, th3):
         # knee joints' coordinates
@@ -103,7 +103,7 @@ class Robot:
 
             return [x, y, min(z1, z2)]
 
-
+        #  normal solution
         a1_ = 2*(A3-A1)
         a2_ = 2*(A3-A2)
         b1 = A3.dot(A3) - A1.dot(A1)
@@ -136,12 +136,12 @@ class Robot:
             return [x2, y2, z2]
 
 
-    def forward_kinematics(self, th1, th2, th3, phi):
+    def forward_kinematics(self, th1, th2, th3, phi, precision=4):
         BOVec = np.array([0, 0, -self.bZO])
         ToolZRot = np.array([[math.cos(phi), -math.sin(phi), 0], [math.sin(phi), math.cos(phi), 0], [0, 0, 1]])
         I = np.array(self._internal_forward_kinematics(th1, th2, th3))
         ExtP = self.baseVec + BOVec + I + ToolZRot.dot(self.toolVec)
-        return list(map(lambda x: round(x,6), [ExtP[0], ExtP[1], ExtP[2], phi]))
+        return list(map(lambda x: round(x,precision), [ExtP[0], ExtP[1], ExtP[2], phi]))
 
 
 
