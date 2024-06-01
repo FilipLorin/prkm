@@ -14,7 +14,7 @@ def minarg(a:float, b:float):
 class Robot:
     bZO:float
     wB:float
-    L:float
+L:float
     l:float
     wP:float
     tH:float
