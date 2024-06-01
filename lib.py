@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import json
 import numpy as np
+import math as m
 
 
 @dataclass
@@ -14,10 +15,10 @@ class Vec:
 @dataclass
 class Robot:
     bZO:float
-    bR:float
-    a:float
+    wB:float
+    L:float
     l:float
-    fR:float
+    wP:float
     tH:float
 
     def __post_init__(self):
@@ -53,10 +54,10 @@ class RobotFactory:
         #TODO: Data validation
         try:
             robot = Robot(float(data['baseZOffset']),
-                      float(data['baseRadious']),
-                      float(data['arm']),
-                      float(data['link']),
-                      float(data['flangeRadious']),
+                      float(data['wB']),
+                      float(data['L']),
+                      float(data['l']),
+                      float(data['wP']),
                       float(data['toolHeight']))
         except KeyError as e:
             raise KeyError(f"Missing data in file! {e}")

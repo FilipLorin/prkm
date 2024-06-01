@@ -1,8 +1,8 @@
 {
   "baseZOffset": "65",
-  "baseRadious": "210",
-  "arm": "330",
-  "link": "850",
-  "flangeRadious": "50",
+  "wB": "210",
+  "L": "330",
+  "l": "850",
+  "wP": "50",
   "toolHeight": "195"
 }
