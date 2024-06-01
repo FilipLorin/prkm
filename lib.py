@@ -1,7 +1,13 @@
 from dataclasses import dataclass
 import json
 import numpy as np
-import math as m
+import math
+
+def minarg(a:float, b:float):
+    if abs(a) < abs(b):
+        return a
+    else:
+        return b
 
 
 @dataclass
@@ -17,10 +23,10 @@ class Robot:
         self.toolVec = np.array([0,0,0])
         self.baseVec = np.array([0,0,0])
 
-    def attach_tool(self, tool:array):
+    def attach_tool(self, tool:np.array):
         self.toolVec = tool
 
-    def attach_base(self, base:array):
+    def attach_base(self, base:np.array):
         self.baseVec = base
 
     def inverse_kinematics(self, x, y, z):
@@ -39,13 +45,18 @@ class Robot:
         G3 = x**2+y**2+z**2+b**2+c**2+self.L**2+2*(-x*b+y*c)-self.l**2
 
         # forcing "knee outwards" position
-        t1 = (F-math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
-        t2 = (F-math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
-        t3 = (F-math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+        t11 = (F-math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
+        t21 = (F-math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
+        t31 = (F-math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+        
+        t12 = (F+math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
+        t22 = (F+math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
+        t32 = (F+math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
 
-        th1 = 2*math.atan(t1)
-        th2 = 2*math.atan(t2)
-        th3 = 2*math.atan(t3)
+
+        th1 = minarg(2*math.atan(t11), 2*math.atan(t12))
+        th2 = minarg(2*math.atan(t21), 2*math.atan(t22))
+        th3 = minarg(2*math.atan(t31), 2*math.atan(t32))
 
         return [th1, th2, th3]
 
