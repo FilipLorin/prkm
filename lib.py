@@ -5,14 +5,6 @@ import math as m
 
 
 @dataclass
-class Vec:
-    x:float
-    y:float
-    z:float
-    #TODO: Change this to numpy arrays
-
-
-@dataclass
 class Robot:
     bZO:float
     wB:float
@@ -22,14 +14,40 @@ class Robot:
     tH:float
 
     def __post_init__(self):
-        self.toolVec = Vec(0,0,0)
-        self.baseVec = Vec(0,0,0)
+        self.toolVec = np.array([0,0,0])
+        self.baseVec = np.array([0,0,0])
 
-    def attach_tool(self, tool:Vec):
+    def attach_tool(self, tool:array):
         self.toolVec = tool
 
-    def attach_base(self, base:Vec):
+    def attach_base(self, base:array):
         self.baseVec = base
+
+    def inverse_kinematics(self, x, y, z):
+        a = self.wB - 2*self.wP
+        b = 6*math.sqrt(3)*self.wP/2 - math.sqrt(3)/2*self.wB
+        c = self.wP - 0.5*self.wB
+
+        E1 = 2*self.L*(y+a)
+        F = 2*z*self.L
+        G1 = x**2+y**2+z**2+a**2+self.L**2+2*y*a-self.l**2
+
+        E2 = -self.L*(math.sqrt(3)*(x+b)+y+c)
+        G2 = x**2+y**2+z**2+b**2+c**2+self.L**2+2*(x*b+y*c)-self.l**2
+
+        E3 = self.L*(math.sqrt(3)*(x-b)-y-c)
+        G3 = x**2+y**2+z**2+b**2+c**2+self.L**2+2*(-x*b+y*c)-self.l**2
+
+        # forcing "knee outwards" position
+        t1 = (F-math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
+        t2 = (F-math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
+        t3 = (F-math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+
+        th1 = 2*math.atan(t1)
+        th2 = 2*math.atan(t2)
+        th3 = 2*math.atan(t3)
+
+        return [th1, th2, th3]
 
 
 class RobotFactory:
@@ -69,6 +87,4 @@ class RobotFactory:
             #TODO: as above
             robot.attach_tool(data['toolVec'])
         return robot
-
-factory = RobotFactory()
 

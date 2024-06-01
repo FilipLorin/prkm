@@ -3,6 +3,7 @@ import sys
 
 
 def main():
+    #TODO: handle sys input information, create robot, return values
     pass
 
 
