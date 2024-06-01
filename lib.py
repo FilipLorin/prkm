@@ -3,18 +3,13 @@ import json
 import numpy as np
 import math
 
-def minarg(a:float, b:float):
-    if abs(a) < abs(b):
-        return a
-    else:
-        return b
 
 
 @dataclass
 class Robot:
     bZO:float
     wB:float
-L:float
+    L:float
     l:float
     wP:float
     tH:float
@@ -29,9 +24,15 @@ L:float
     def attach_base(self, base:np.array):
         self.baseVec = base
 
-    def inverse_kinematics(self, x, y, z):
+    def _minarg(self, a:float, b:float):
+        if abs(a) < abs(b):
+            return a
+        else:
+            return b
+
+    def _internal_inverse_kinematics(self, x:float, y:float, z:float, w:float):
         a = self.wB - 2*self.wP
-        b = 6*math.sqrt(3)*self.wP/2 - math.sqrt(3)/2*self.wB
+        b = 3*math.sqrt(3)*self.wP - (math.sqrt(3)/2)*self.wB
         c = self.wP - 0.5*self.wB
 
         E1 = 2*self.L*(y+a)
@@ -53,12 +54,19 @@ L:float
         t22 = (F+math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
         t32 = (F+math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
 
+        th1 = self._minarg(2*math.atan(t11), 2*math.atan(t12))
+        th2 = self._minarg(2*math.atan(t21), 2*math.atan(t22))
+        th3 = self._minarg(2*math.atan(t31), 2*math.atan(t32))
 
-        th1 = minarg(2*math.atan(t11), 2*math.atan(t12))
-        th2 = minarg(2*math.atan(t21), 2*math.atan(t22))
-        th3 = minarg(2*math.atan(t31), 2*math.atan(t32))
+        #TODO: check for invalid data
 
-        return [th1, th2, th3]
+        return [th1, th2, th3, w]
+
+    def inverse_kinematics(self, x, y, z, w):
+        ExtP = np.array([x,y,z])
+        ToolZRot = np.array([[math.cos(w), -math.sin(w), 0], [math.sin(w), math.cos(w), 0], [0, 0, 1]])
+        I = self.baseVec - ExtP + ToolZRot.dot(self.toolVec)
+        return self._internal_inverse_kinematics(I[0], I[1], I[2], w)
 
 
 class RobotFactory:
@@ -78,6 +86,9 @@ class RobotFactory:
         deserialiser = self._get_deserialiser(format)
         return deserialiser(file_name)
 
+    def _str2arr(self, val):
+       return np.array(val.split(", ")) 
+
     def create_from_file(self, format:str = 'JSON', file_name:str = 'dimentions.json'):
         data = self.deserialise(format, file_name)
         #TODO: Data validation
@@ -86,16 +97,13 @@ class RobotFactory:
                       float(data['wB']),
                       float(data['L']),
                       float(data['l']),
-                      float(data['wP']),
-                      float(data['toolHeight']))
+                      float(data['wP']))
         except KeyError as e:
             raise KeyError(f"Missing data in file! {e}")
 
         if 'baseVec' in data.keys():
-            #TODO: convert string to Vec
-            robot.attach_base(data['baseVec'])
+            robot.attach_base(self._str2arr(data['baseVec']))
         if 'toolVec' in data.keys():
-            #TODO: as above
-            robot.attach_tool(data['toolVec'])
+            robot.attach_tool(self._str2arr(data['toolVec']))
         return robot
 
