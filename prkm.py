@@ -10,17 +10,11 @@ inverse_parser = subparsers.add_parser('inverse', aliases = ['inv'], help='find 
                                        description = """Returns the theta_1-3 and phi joint angles. 
                                        \n Theta=0 when horisontal, positive when downwards. 
                                        \n Phi = 0 ...""")
-inverse_parser.add_argument('x', type=float, help='global X coordinate of tooltip to solve for')
-inverse_parser.add_argument('y', type=float, help='global Y ...')
-inverse_parser.add_argument('z', type=float, help='global Z ...')
-inverse_parser.add_argument('a', type=float, help='tool orientation (Z rotation)')
+inverse_parser.add_argument('coords', type=float, help='global XYZA coordinates of tooltip to solve for', nargs=4)
 inverse_parser.set_defaults(task='inverse')
 
 forward_parser = subparsers.add_parser('forward',aliases = ['fwd'], help='find forward kinematics solution for given joint positions')
-forward_parser.add_argument('th1', type=float, help = 'angle in join 1')
-forward_parser.add_argument('th2', type=float, help = 'angle in join 2')
-forward_parser.add_argument('th3', type=float, help = 'angle in join 3')
-forward_parser.add_argument('phi', type=float, help = 'rotation angle')
+forward_parser.add_argument('angles', type=float, help = 'joint angles 123a to find tooltip position for', nargs=4)
 forward_parser.set_defaults(task='forward')
 
 args = parser.parse_args()
@@ -29,6 +23,6 @@ factory = lib.RobotFactory()
 robot = factory.create_from_file('JSON', args.file)
 
 if(args.task=='inverse'):
-    print(robot.inverse_kinematics(args.x, args.y, args.z, args.a, args.precision))
+    print(robot.inverse_kinematics(*args.coords, args.precision))
 elif(args.task=='forward'):
-    print(robot.forward_kinematics(args.th1, args.th2, args.th3, args.phi, args.precision))
+    print(robot.forward_kinematics(*args.angles, args.precision))
