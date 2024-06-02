@@ -2,7 +2,7 @@ import lib
 import argparse
 
 parser = argparse.ArgumentParser(prog="python prkm.py")
-parser.add_argument('-f', '--file', help='name of JSON file with robot dimentions', required=True)
+parser.add_argument('-f', '--file', help='name of JSON file with robot dimentions', default="dimentions.json")
 parser.add_argument('-p', '--precision', help='Number of digits of solution to display', type=int, default=4)
 subparsers = parser.add_subparsers(required=True, help='type kinematic solution to find') 
 
@@ -20,7 +20,7 @@ forward_parser = subparsers.add_parser('forward',aliases = ['fwd'], help='find f
 forward_parser.add_argument('th1', type=float, help = 'angle in join 1')
 forward_parser.add_argument('th2', type=float, help = 'angle in join 2')
 forward_parser.add_argument('th3', type=float, help = 'angle in join 3')
-forward_parser.add_argument('phi', type=float, help = 'angle in join 4')
+forward_parser.add_argument('phi', type=float, help = 'rotation angle')
 forward_parser.set_defaults(task='forward')
 
 args = parser.parse_args()
