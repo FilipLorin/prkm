@@ -68,7 +68,7 @@ class Robot:
         I = self.baseVec + BOVec - ExtP + ToolZRot.dot(self.toolVec)
         return list(map(lambda x: round(x,precision), [*self._internal_inverse_kinematics(I[0], I[1], I[2]), w]))
 
-    def _internal_forward_kinematics(self, th1, th2, th3):
+    def knee_joint_coordinates(self, th1, th2, th3):
         # knee joints' coordinates
         A1 = np.array([0, 
                        -self.wB-self.L*math.cos(th1)+2*self.wP, 
@@ -79,7 +79,10 @@ class Robot:
         A3 = np.array([-0.5*math.sqrt(3)*(self.wB+self.L*math.cos(th3))+(3/math.sqrt(3))*self.wP,
                        0.5*(self.wB+self.L*math.cos(th3))-self.wP,
                        -self.L*math.sin(th3)])
-        
+        return [A1, A2, A3]
+
+    def _internal_forward_kinematics(self, th1, th2, th3):
+        A1, A2, A3 = self.knee_joint_coordinates(th1, th2, th3)
         # three spheres intersection algorythm
         
         #  same z height guard clause
@@ -109,9 +112,6 @@ class Robot:
         b1 = A3.dot(A3) - A1.dot(A1)
         b2 = A3.dot(A3) - A2.dot(A2)
 
-        if math.isclose(a1_[2], 0.0) or math.isclose(a2_[2], 0.0):
-            raise ValueError("Parameter close to 0, computation impossible.")
-        
         a1 = a1_[0]/a1_[2]-a2_[0]/a2_[2]
         a2 = a1_[1]/a1_[2]-a2_[1]/a2_[2]
         a3 = b2/a2_[2]-b1/a1_[2]
