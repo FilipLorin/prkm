@@ -82,7 +82,7 @@ class Robot:
         
         # three spheres intersection algorythm
         
-        #  same z hegiht guard clause
+        #  same z height guard clause
         if (math.isclose(A1[2], A2[2]) and math.isclose(A2[2], A3[2])):
             #print("Z-Heights close, switching to alternative solver")
             a = 2*(A3[0]-A1[0])
@@ -108,6 +108,9 @@ class Robot:
         a2_ = 2*(A3-A2)
         b1 = A3.dot(A3) - A1.dot(A1)
         b2 = A3.dot(A3) - A2.dot(A2)
+
+        if math.isclose(a1_[2], 0.0) or math.isclose(a2_[2], 0.0):
+            raise ValueError("Parameter close to 0, computation impossible.")
         
         a1 = a1_[0]/a1_[2]-a2_[0]/a2_[2]
         a2 = a1_[1]/a1_[2]-a2_[1]/a2_[2]

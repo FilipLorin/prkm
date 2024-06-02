@@ -1,13 +1,16 @@
 import lib
+import math
 
-def isclose(a:float, b:float, precision = 0.001):
+
+def isclose(a:float, b:float, precision = 0.0001):
     return (abs(float(a)-float(b)) < precision)
+
 
 def main():
     factory = lib.RobotFactory()
     robot = factory.create_from_file('JSON', 'dimentions.json')
     
-    step = 100
+    step = 50
 
     attempts = 0
     out_of_reach = 0
@@ -32,10 +35,12 @@ def main():
                         #print("out of reach: ", e)
                         continue
 
-                    I = robot.forward_kinematics(*th, 12)
-                    if I[0] is None or I[1] is None or I[2] is None:
+                    try:
+                        I = robot.forward_kinematics(*th, 12)
+                    except ValueError:
                         error += 1
                         continue
+
                     I[0] = -I[0]
                     I[1] = -I[1]
                     delta_x += (I[0]-x)**2
@@ -47,6 +52,7 @@ def main():
                         #print("Valid!")
                     else:                        
                         conflict += 1
+                        """
                         print(f"fwd={[x, y, z]},  inv={I[:3]}")
                         if not isclose(I[0], x):
                             print("x failed")
@@ -54,10 +60,11 @@ def main():
                             print("y failed")
                         if not isclose(I[2], z):
                             print("z failed")
+                        """
     
     assert(attempts == out_of_reach+error+success + conflict)
-    print(f"\n Attempts: {attempts} \n Out of reach: {out_of_reach} \n Success {success} \n Conflict: {conflict}")
-    reached = attempts-out_of_reach
+    print(f"\n Attempts: {attempts} \n Out of reach: {out_of_reach} \n Error: {error} \n Success: {success} \n Conflict: {conflict}")
+    reached = attempts-out_of_reach-error
     print(f"\n MSE: \n\t x: {delta_x/reached} \n\t y: {delta_y/reached} \n\t z: {delta_z/reached}")
 
 
