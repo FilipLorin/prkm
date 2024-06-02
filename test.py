@@ -48,7 +48,7 @@ def main():
                     delta_z += (I[2]-z)**2
                     if isclose(I[0], x) and isclose(I[1], y) and isclose(I[2], z):
                         success += 1
-                        file.write(f"{I[0]}, {I[1]}, {I[2]}\n")
+                        file.write(f"{I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
                         #print("Valid!")
                     else:                        
                         conflict += 1
