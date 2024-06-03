@@ -68,7 +68,7 @@ def main():
                         delta_z2 += (I[2]-z)**2
                     else:                        
                         conflict += 1
-                        with open("conflicts.csv", 'w') as conf:
+                        with open("conflicts.csv", 'a') as conf:
                             conf.write(f"{x}, {y}, {z}, {I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
 
     
