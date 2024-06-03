@@ -134,9 +134,9 @@ class Robot:
         z2 = a6*y2+a7
 
         if z1 < z2:
-            return [x1, y1, z1]
+            return [-x1, -y1, z1]
         else:
-            return [x2, y2, z2]
+            return [-x2, -y2, z2]
 
 
     def forward_kinematics(self, th1, th2, th3, phi, precision=4):

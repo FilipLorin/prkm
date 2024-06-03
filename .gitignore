@@ -3,3 +3,4 @@ pyvenv/
 \
 pointcloud.csv
 conflicts.csv
+errors.csv

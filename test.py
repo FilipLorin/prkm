@@ -31,45 +31,50 @@ def main():
 
     with open('pointcloud.csv', 'w') as file:
         file.write("x, y, z, th1, th2, th3\n")
-        for x in range(-1500, 1500, step):
-            for y in range(-1500, 1500, step):
-                for z in range(-1500, 0, step):
-                    attempts += 1
-                    try:
-                        th = robot.inverse_kinematics(x, y, z, 0, 8)
-                    except Exception as e:
-                        out_of_reach += 1
-                        #print("out of reach: ", e)
-                        continue
 
-                    try:
-                        I = robot.forward_kinematics(*th, 7)
-                    except ValueError as e:
-                        #print("FWD Error:", e)
-                        error += 1
-                        continue
-                    
-                    if math.isnan(I[0]) or math.isnan(I[1]) or math.isnan(I[2]):
-                        error += 1
-                        continue
-                    
+    with open('errors.csv', 'w') as err:
+        err.write("x, y, z\n")
 
-                    I[0] = -I[0]
-                    I[1] = -I[1]
-                    delta_x1 += (I[0]-x)**2
-                    delta_y1 += (I[1]-y)**2
-                    delta_z1 += (I[2]-z)**2
+    for x in range(-1500, 1500, step):
+        for y in range(-1500, 1500, step):
+            for z in range(-1500, 0, step):
+                attempts += 1
+                try:
+                    th = robot.inverse_kinematics(x, y, z, 0, 8)
+                except Exception as e:
+                    out_of_reach += 1
+                    continue
 
-                    if isclose(I[0], x, precision) and isclose(I[1], y, precision) and isclose(I[2], z, precision):
-                        success += 1
+                try:
+                    I = robot.forward_kinematics(*th, 7)
+                except ValueError as e:
+                    error += 1
+                    with open('errors.csv', 'a') as err:
+                        err.write(f"{x}, {y}, {z}\n")
+                    continue
+                
+                if math.isnan(I[0]) or math.isnan(I[1]) or math.isnan(I[2]):
+                    error += 1
+                    with open('errors.csv', 'a') as err:
+                        err.write(f"{x}, {y}, {z}\n")
+                    continue
+                
+
+                delta_x1 += (I[0]-x)**2
+                delta_y1 += (I[1]-y)**2
+                delta_z1 += (I[2]-z)**2
+
+                if isclose(I[0], x, precision) and isclose(I[1], y, precision) and isclose(I[2], z, precision):
+                    success += 1
+                    with open('pointcloud.csv', 'a') as file:
                         file.write(f"{I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
-                        delta_x2 += (I[0]-x)**2
-                        delta_y2 += (I[1]-y)**2
-                        delta_z2 += (I[2]-z)**2
-                    else:                        
-                        conflict += 1
-                        with open("conflicts.csv", 'a') as conf:
-                            conf.write(f"{x}, {y}, {z}, {I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
+                    delta_x2 += (I[0]-x)**2
+                    delta_y2 += (I[1]-y)**2
+                    delta_z2 += (I[2]-z)**2
+                else:                        
+                    conflict += 1
+                    with open("conflicts.csv", 'a') as conf:
+                        conf.write(f"{x}, {y}, {z}, {I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
 
     
     assert(attempts == out_of_reach+error+success + conflict)
