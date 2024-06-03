@@ -1,4 +1,3 @@
-clear; clc; close all;
 data = readtable("pointcloud.csv");
 
 figure
