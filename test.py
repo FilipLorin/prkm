@@ -26,6 +26,8 @@ def main():
     delta_y2 = 0.0
     delta_z2 = 0.0
     
+    with open('conflicts.csv', 'w') as conf:
+        conf.write("xf, yf, zf, xi, yi, zi, th1, th2, th3\n")
 
     with open('pointcloud.csv', 'w') as file:
         file.write("x, y, z, th1, th2, th3\n")
@@ -66,6 +68,9 @@ def main():
                         delta_z2 += (I[2]-z)**2
                     else:                        
                         conflict += 1
+                        with open("conflicts.csv", 'w') as conf:
+                            conf.write(f"{x}, {y}, {z}, {I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
+
     
     assert(attempts == out_of_reach+error+success + conflict)
     print(f"\n Attempts: {attempts} \n Out of reach: {out_of_reach} \n Error: {error} \n Success: {success} \n Conflict (not within +/-{precision}): {conflict}")
