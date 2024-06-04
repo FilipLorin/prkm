@@ -112,6 +112,9 @@ class Robot:
         b1 = A3.dot(A3) - A1.dot(A1)
         b2 = A3.dot(A3) - A2.dot(A2)
 
+        if math.isclose(a1_[2], 0.0) or math.isclose(a2_[2], 0.0):
+            raise ValueError("Parameter computation failed.")
+
         a1 = a1_[0]/a1_[2]-a2_[0]/a2_[2]
         a2 = a1_[1]/a1_[2]-a2_[1]/a2_[2]
         a3 = b2/a2_[2]-b1/a1_[2]

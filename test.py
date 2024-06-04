@@ -53,12 +53,6 @@ def main():
                         err.write(f"{x}, {y}, {z}\n")
                     continue
                 
-                if math.isnan(I[0]) or math.isnan(I[1]) or math.isnan(I[2]):
-                    error += 1
-                    with open('errors.csv', 'a') as err:
-                        err.write(f"{x}, {y}, {z}\n")
-                    continue
-                
 
                 delta_x1 += (I[0]-x)**2
                 delta_y1 += (I[1]-y)**2
