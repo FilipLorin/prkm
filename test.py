@@ -12,6 +12,7 @@ def main():
     
     step = 100
     precision = 0.001
+    max_hip_negative_angle = -math.pi*0.65
 
     attempts = 0
     out_of_reach = 0
@@ -42,6 +43,10 @@ def main():
                 try:
                     th = robot.inverse_kinematics(x, y, z, 0, 8)
                 except Exception as e:
+                    out_of_reach += 1
+                    continue
+
+                if th[0] < max_hip_negative_angle or th[1] < max_hip_negative_angle or th[2] < max_hip_negative_angle:
                     out_of_reach += 1
                     continue
 
