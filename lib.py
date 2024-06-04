@@ -134,7 +134,6 @@ class Robot:
         b = 2*a4*(a5-A1[0])-2*A1[1]+2*a6*(a7-A1[2])
         c = a5*(a5-2*A1[0])+a7*(a7-2*A1[2])+A1.dot(A1)-self.l**2
 
-        # forcing downmost solution
         y1 = (-b+math.sqrt(b**2-4*a*c))/(2*a)
         y2 = (-b-math.sqrt(b**2-4*a*c))/(2*a)
 
@@ -143,6 +142,7 @@ class Robot:
         x2 = a4*y2+a5
         z2 = a6*y2+a7
 
+        # forcing downmost solution
         if z1 < z2:
             result = np.array([-x1, -y1, z1])
         else:

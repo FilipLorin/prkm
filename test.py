@@ -12,7 +12,7 @@ def main():
     
     step = 100
     precision = 0.001
-    max_hip_negative_angle = -math.pi*0.65
+    max_hip_negative_angle = -math.pi*0.66
 
     attempts = 0
     out_of_reach = 0
