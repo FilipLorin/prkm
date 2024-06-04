@@ -82,11 +82,12 @@ class Robot:
         return [A1, A2, A3]
 
     def _internal_forward_kinematics(self, th1, th2, th3):
-        A1, A2, A3 = self.knee_joint_coordinates(th1, th2, th3)
         # three spheres intersection algorythm
         
         #  same z height guard clause
-        if (math.isclose(A1[2], A2[2]) and math.isclose(A2[2], A3[2])):
+        if math.isclose(th1, th2) and math.isclose(th2, th3):
+            A1, A2, A3 = self.knee_joint_coordinates(th1, th2, th3)
+
             #print("Z-Heights close, switching to alternative solver")
             a = 2*(A3[0]-A1[0])
             b = 2*(A3[1]-A1[1])
@@ -106,14 +107,20 @@ class Robot:
 
             return [x, y, min(z1, z2)]
 
+        if math.isclose(th2, th3):
+            # swap coordinates to avoid 0 division
+            swap_flag = True
+            A1, A2, A3 = self.knee_joint_coordinates(th2, th3, th1)
+        else:
+            swap_flag = False
+            A1, A2, A3 = self.knee_joint_coordinates(th1, th2, th3)
+
         #  normal solution
         a1_ = 2*(A3-A1)
         a2_ = 2*(A3-A2)
         b1 = A3.dot(A3) - A1.dot(A1)
         b2 = A3.dot(A3) - A2.dot(A2)
 
-        if math.isclose(a1_[2], 0.0) or math.isclose(a2_[2], 0.0):
-            raise ValueError("Parameter computation failed.")
 
         a1 = a1_[0]/a1_[2]-a2_[0]/a2_[2]
         a2 = a1_[1]/a1_[2]-a2_[1]/a2_[2]
@@ -137,9 +144,18 @@ class Robot:
         z2 = a6*y2+a7
 
         if z1 < z2:
-            return [-x1, -y1, z1]
+            result = np.array([-x1, -y1, z1])
         else:
-            return [-x2, -y2, z2]
+            result = np.array([-x2, -y2, z2])
+
+        # reverse rotation caused by coordinate swap
+        if swap_flag:
+            w = 2*math.pi/3
+            ZRot = np.array([[math.cos(w), -math.sin(w), 0], [math.sin(w), math.cos(w), 0], [0, 0, 1]])
+            result = ZRot.dot(result)
+            #raise ValueError("no hej")
+
+        return result
 
 
     def forward_kinematics(self, th1, th2, th3, phi, precision=4):

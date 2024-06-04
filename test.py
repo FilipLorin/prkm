@@ -10,7 +10,7 @@ def main():
     factory = lib.RobotFactory()
     robot = factory.create_from_file('JSON', 'dimentions.json')
     
-    step = 50
+    step = 100
     precision = 0.001
 
     attempts = 0
