@@ -44,20 +44,25 @@ class Robot:
         E3 = self.L*(math.sqrt(3)*(x-b)-y-c)
         G3 = x**2+y**2+z**2+b**2+c**2+self.L**2+2*(-x*b+y*c)-self.l**2
 
-        # forcing "knee outwards" position
-        t11 = (F-math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
-        t21 = (F-math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
-        t31 = (F-math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
-        
-        t12 = (F+math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
-        t22 = (F+math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
-        t32 = (F+math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+        try:
+            t11 = (F-math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
+            t21 = (F-math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
+            t31 = (F-math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+            
+            t12 = (F+math.sqrt(E1**2+F**2-G1**2))/(G1-E1)
+            t22 = (F+math.sqrt(E2**2+F**2-G2**2))/(G2-E2)
+            t32 = (F+math.sqrt(E3**2+F**2-G3**2))/(G3-E3)
+        except ValueError:
+            raise ValueError("Inverse kinematics failed, target point out of range.")
 
+
+        # forcing "knee outwards" position
         th1 = self._minarg(2*math.atan(t11), 2*math.atan(t12))
         th2 = self._minarg(2*math.atan(t21), 2*math.atan(t22))
         th3 = self._minarg(2*math.atan(t31), 2*math.atan(t32))
 
         #TODO: check for invalid data
+        #TODO: catch 
 
         return [th1, th2, th3]
 
@@ -153,7 +158,6 @@ class Robot:
             w = 2*math.pi/3
             ZRot = np.array([[math.cos(w), -math.sin(w), 0], [math.sin(w), math.cos(w), 0], [0, 0, 1]])
             result = ZRot.dot(result)
-            #raise ValueError("no hej")
 
         return result
 

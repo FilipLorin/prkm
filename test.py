@@ -10,9 +10,9 @@ def main():
     factory = lib.RobotFactory()
     robot = factory.create_from_file('JSON', 'dimentions.json')
     
-    step = 100
+    step = 20
     precision = 0.001
-    max_hip_negative_angle = -math.pi*0.66
+    max_hip_negative_angle = -math.pi*0.45
 
     attempts = 0
     out_of_reach = 0
@@ -42,7 +42,7 @@ def main():
                 attempts += 1
                 try:
                     th = robot.inverse_kinematics(x, y, z, 0, 8)
-                except Exception as e:
+                except ValueError:
                     out_of_reach += 1
                     continue
 
@@ -73,7 +73,7 @@ def main():
                 else:                        
                     conflict += 1
                     with open("conflicts.csv", 'a') as conf:
-                        conf.write(f"{x}, {y}, {z}, {I[0]}, {I[1]}, {I[2]}, {th[0]}, {th[1]}, {th[2]}\n")
+                        conf.write(f"{I[0]}, {I[1]}, {I[2]}, {x}, {y}, {z}, {th[0]}, {th[1]}, {th[2]}\n")
 
     
     assert(attempts == out_of_reach+error+success + conflict)

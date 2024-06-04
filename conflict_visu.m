@@ -1,3 +1,4 @@
+close all
 points = readtable("pointcloud.csv");
 conf = readtable('conflicts.csv');
 err = readtable('errors.csv');
