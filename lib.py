@@ -29,7 +29,27 @@ class Robot:
         else:
             return b
 
+    def _vec_dist(self, a, b):
+        return math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2)
+
+    def _internal_inverse_knee_overstraight(self, x:float, y:float, z:float, tol:float=0.90) -> bool:
+        I = np.array([x,y,z])
+        P1 = np.array([0, self.wB, 0])
+        P2 = np.array([self.wB*math.cos(2*math.pi/3), self.wB*math.sin(2*math.pi/3), 0])
+        P3 = np.array([self.wB*math.cos(4*math.pi/3), self.wB*math.sin(4*math.pi/3), 0])
+        
+        if self._vec_dist(I, P1) > (self.l+self.L)*tol or self._vec_dist(I, P1) < (self.l+self.L)*(2-2*tol): 
+            return True
+        if self._vec_dist(I, P2) > (self.l+self.L)*tol or self._vec_dist(I, P1) < (self.l+self.L)*(2-2*tol): 
+            return True
+        if self._vec_dist(I, P3) > (self.l+self.L)*tol or self._vec_dist(I, P1) < (self.l+self.L)*(2-2*tol):
+            return True
+        return False
+
     def _internal_inverse_kinematics(self, x:float, y:float, z:float):
+        if self._internal_inverse_knee_overstraight(x,y,z):
+            raise ValueError("Inverse kinematics failed, knee overstraight")
+
         a = self.wB - 2*self.wP
         b = (3/math.sqrt(3))*self.wP - (math.sqrt(3)/2)*self.wB
         c = self.wP - 0.5*self.wB

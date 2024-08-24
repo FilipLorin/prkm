@@ -10,7 +10,7 @@ def main():
     factory = lib.RobotFactory()
     robot = factory.create_from_file('JSON', 'dimentions.json')
     
-    step = 20
+    step = 30
     precision = 0.001
     max_hip_negative_angle = -math.pi*0.45
 
