@@ -1,12 +1,11 @@
 # TODO:
-    - Program
-        - Wykrywanie położeń krytycznych i ostrzeganie o zbliżeniu
-        - Wykrywanie kolizji
-        - Parametryzacja systemów zabezpieczających
-    - Sprawozdanie
-        - Bibliografia
-        - Strona główna
-        - Opis problemu
-        - Opis metodologii
-        - Opis implementacji i użycia
-        - Opis systemów zabezpieczających
+    - [ ] Program
+        - [ ] Wykrywanie położeń krytycznych i ostrzeganie o zbliżeniu
+        - [ ] Parametryzacja systemów zabezpieczających
+    - [ ] Sprawozdanie
+        - [ ] Bibliografia
+        - [ ] Strona główna
+        - [ ] Opis problemu
+        - [ ] Opis metodologii
+        - [ ] Opis implementacji i użycia
+        - [ ] Opis systemów zabezpieczających
