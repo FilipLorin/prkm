@@ -4,7 +4,7 @@ import argparse
 parser = argparse.ArgumentParser(prog="python prkm.py")
 parser.add_argument('-f', '--file', help='name of JSON file with robot dimentions', default="dimentions.json")
 parser.add_argument('-p', '--precision', help='Number of digits of solution to display', type=int, default=4)
-subparsers = parser.add_subparsers(required=True, help='type kinematic solution to find') 
+subparsers = parser.add_subparsers(required=True, help='type of kinematic solution to find') 
 
 inverse_parser = subparsers.add_parser('inverse', aliases = ['inv'], help='find inverse kinematics solution for a given tooltip position',
                                        description = """Returns the theta_1-3 and phi joint angles. 

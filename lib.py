@@ -12,6 +12,7 @@ class Robot:
     L:float
     l:float
     wP:float
+    pZO: float
 
     def __post_init__(self):
         self.toolVec = np.array([0,0,0])
@@ -82,7 +83,6 @@ class Robot:
         th3 = self._minarg(2*math.atan(t31), 2*math.atan(t32))
 
         #TODO: check for invalid data
-        #TODO: catch 
 
         return [th1, th2, th3]
 
@@ -192,40 +192,46 @@ class Robot:
 
 
 class RobotFactory:
-    def _deserialise_from_json(self, file_name:str):
+    def _deserialize_from_json(self, file_name:str) -> dict:
         with open(file_name, "r") as file:
-            data = json.loads(file.read())
-        #TODO: move type conversions here
+            raw = json.loads(file.read())
+        try:
+            data = {k:float(raw[k]) for k in ['bZ', 'wB', 'L', 'l', 'wP', 'pZ']}
+        except Error as e:
+           raise ValueError("Could not convert dimention data to float", e) 
         return data
 
-    def _get_deserialiser(self, format:str):
+    def _get_deserializer(self, format:str):
         if format == 'JSON':
-            return self._deserialise_from_json
+            return self._deserialize_from_json
         else:
             raise ValueError(fromat)
 
-    def deserialise(self, format:str, file_name:str):
-        deserialiser = self._get_deserialiser(format)
-        return deserialiser(file_name)
+    def deserialize(self, format:str, file_name:str) -> list:
+        deserializer = self._get_deserializer(format)
+        return deserializer(file_name)
 
-    def _str2arr(self, val):
-       return np.array(val.split(", ")) 
+    def _str2arr(self, val:str) -> np.array:
+       return np.array([float(v) for v in val.split(", ")]) 
 
-    def create_from_file(self, format:str, file_name:str):
-        data = self.deserialise(format, file_name)
+    def create_from_file(self, format:str, file_name:str) -> Robot:
+        data = self.deserialize(format, file_name)
         #TODO: Data validation
         try:
-            robot = Robot(float(data['baseZOffset']),
-                      float(data['wB']),
-                      float(data['L']),
-                      float(data['l']),
-                      float(data['wP']))
+            robot = Robot(
+                data['bZ'],
+                data['wB'],
+                data['L'],
+                data['l'],
+                data['wP'],
+                data['pZ']
+            ) #TODO: dodać multiplikatory kątów obrotu w osiach napędowych
         except KeyError as e:
             raise KeyError(f"Missing data in file! {e}")
 
         if 'baseVec' in data.keys():
-            robot.attach_base(self._str2arr(data['baseVec']))
+            robot.attach_base(self._str2arr(data['baseVec']) if isinstance(str, data['baseVec']) else np.array(data['baseVec']))
         if 'toolVec' in data.keys():
-            robot.attach_tool(self._str2arr(data['toolVec']))
+            robot.attach_tool(self._str2arr(data['toolVec']) if isinstance(str, data['toolVec']) else np.array(data['toolVec']))
         return robot
 

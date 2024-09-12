@@ -20,6 +20,10 @@ def main():
     success = 0
     conflict = 0
 
+    maxerr_x = 0
+    maxerr_y = 0
+    maxerr_z = 0
+
     delta_x1 = 0.0
     delta_y1 = 0.0
     delta_z1 = 0.0
@@ -63,6 +67,10 @@ def main():
                 delta_y1 += (I[1]-y)**2
                 delta_z1 += (I[2]-z)**2
 
+                maxerr_x = max(delta_x1, maxerr_x)
+                maxerr_y = max(delta_y1, maxerr_y)
+                maxerr_z = max(delta_z1, maxerr_z)
+
                 if isclose(I[0], x, precision) and isclose(I[1], y, precision) and isclose(I[2], z, precision):
                     success += 1
                     with open('pointcloud.csv', 'a') as file:
@@ -81,7 +89,7 @@ def main():
     reached = attempts - out_of_reach - error
     print(f"\n MSE (all): \n\t x: {delta_x1/reached} \n\t y: {delta_y1/reached} \n\t z: {delta_z1/reached}")
     print(f"\n MSE (within +/-{precision}): \n\t x: {delta_x2/success} \n\t y: {delta_y2/success} \n\t z: {delta_z2/success}")
-
+    print(f"\n MaxErr: \n\t x: {maxerr_x} \n\t y:{maxerr_y} \n\t z:{maxerr_z}")
 
 if __name__ == '__main__':
     main()
